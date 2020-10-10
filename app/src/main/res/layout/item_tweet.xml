@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tweet"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/common_36dp"
+    android:background="@color/item_tweet_background"
+    android:maxLines="2"
+    android:ellipsize="end"
+    android:paddingStart="@dimen/common_8dp"
+    android:paddingEnd="@dimen/common_8dp"
+    android:textColor="@android:color/black"
+    android:layout_marginTop="@dimen/common_8dp"
+    android:layout_marginStart="@dimen/common_8dp"
+    android:layout_marginEnd="@dimen/common_8dp"
+    tools:text="@tools:sample/lorem[25]" />
