@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/bet-victor-coding-task.iml" filepath="$PROJECT_DIR$/.idea/modules/bet-victor-coding-task.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/BetVictorCodingTask.iml" filepath="$PROJECT_DIR$/.idea/modules/BetVictorCodingTask.iml" group="BetVictorCodingTask" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="BetVictorCodingTask/app" />
     </modules>
   </component>
 </project>

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BetVictorCodingTask</string>
+    <string name="search_field_hint">Type your query...</string>
+    <string name="search_button_title">Start</string>
 </resources>
