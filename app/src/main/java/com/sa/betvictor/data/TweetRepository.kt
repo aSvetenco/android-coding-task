@@ -1,12 +1,12 @@
 package com.sa.betvictor.data
 
 import androidx.lifecycle.MutableLiveData
-import com.sa.betvictor.data.remote.TweetRemoteDataSource
+import com.sa.betvictor.data.remote.TweetRemoteClient
 import com.sa.betvictor.domain.Tweet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class TweetRepository(private val remoteDataSource: TweetRemoteDataSource) {
+class TweetRepository(private val remoteDataSource: TweetRemoteClient) {
 
     private val list = mutableListOf<Tweet>()
 
@@ -15,7 +15,7 @@ class TweetRepository(private val remoteDataSource: TweetRemoteDataSource) {
             //   val deleted = remoteDataSource.deleteRule("")
             val rule = remoteDataSource.addRule(query)
             remoteDataSource.getTweets {
-                list.add(it)
+                list.addAll(it)
                 val newList = ArrayList(list)
                 tweetData.postValue(newList)
             }
