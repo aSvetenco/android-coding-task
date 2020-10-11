@@ -11,19 +11,14 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val adapter = TweetAdapter()
-    private val viewModel: MainViewModel by viewModels { viewModelFactory() }
+    private val viewModel: MainViewModel by viewModels { viewModelFactory(applicationContext) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         viewModel.tweetData.observe(this, ::onTweetsLoaded)
+        viewModel.getTweets()
         search.setOnClickListener { viewModel.fetchStatuses() }
-        adapter.submitList(listOf(
-            Tweet("1111", "1111"),
-            Tweet("2222", "2222"),
-            Tweet("3333", "3333"),
-            Tweet("4444", "4444")
-        ))
         tweetList.adapter = adapter
         tweetList.setHasFixedSize(true)
     }
