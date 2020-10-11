@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface TweetRemoteClient {
     suspend fun addRule(query: String): String
     suspend fun deleteRule(id: String): String
-    suspend fun getTweets(tweetLoaded: (Tweet) -> Unit)
+    suspend fun getTweets(tweetLoaded: (List<Tweet>) -> Unit)
 }
 
 data class AddRuleRequest(val add: List<Rule> = listOf())
@@ -32,3 +32,5 @@ data class Summary(
     val deleted: Int = 1,
     @SerializedName("not_deleted") val notDeleted: Int = 0
 )
+
+data class TweetResponse(@SerializedName("data") val tweet: Tweet = Tweet())

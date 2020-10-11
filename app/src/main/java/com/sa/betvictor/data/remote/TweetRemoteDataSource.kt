@@ -3,7 +3,6 @@ package com.sa.betvictor.data.remote
 import android.util.Log
 import com.google.gson.Gson
 import com.sa.betvictor.domain.Tweet
-import com.sa.betvictor.domain.TweetResponse
 import okio.Buffer
 import java.nio.charset.Charset
 
@@ -24,30 +23,33 @@ class TweetRemoteDataSource(
         return if (meta.summary.deleted == 1) id else ""
     }
 
-    override suspend fun getTweets(tweetLoaded: (Tweet) -> Unit) {
+    override suspend fun getTweets(tweetLoaded: (List<Tweet>) -> Unit) {
         val response = api.getTweets()
         val source = response.source()
         val buffer = Buffer()
         val stream = StringBuilder()
         while (true) {
-            if (source.read(buffer, 1024) == -1L) break
+            if (source.read(buffer, 2560) == -1L) break
             stream.append(buffer.readString(Charset.defaultCharset()))
             if (stream.contains("}\r\n")) {
                 val textStream = stream.toString()
-                val json = textStream.substringBefore("\r\n")
-                val remainder = textStream.substringAfter("\r\n")
                 stream.setLength(0)
-                stream.append(remainder)
-                tweetLoaded(parseTweetJson(json))
+                val tweets = textStream.split("\r\n").toMutableList()
+                val last = tweets.last()
+                if (!last.endsWith("\r\n")) {
+                    tweets.remove(last)
+                    stream.append(last)
+                }
+                tweetLoaded(parseTweetJson(tweets))
             }
         }
     }
 
-    private fun parseTweetJson(json: String) =
+    private fun parseTweetJson(tweets: List<String>) =
         try {
-            gson.fromJson(json, TweetResponse::class.java).tweet
+            tweets.map { gson.fromJson(it, TweetResponse::class.java).tweet }
         } catch (e: Throwable) {
-            Log.e("JSON_FAILED", json)
-            Tweet()
+            Log.e("JSON_FAILED", tweets.toString())
+            listOf()
         }
 }
