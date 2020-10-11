@@ -5,9 +5,9 @@ import com.sa.betvictor.domain.Tweet
 import kotlinx.coroutines.flow.Flow
 
 interface TweetRemoteClient {
-    suspend fun addRule(query: String): String
-    suspend fun deleteRule(id: String): String
-    suspend fun getTweets(tweetLoaded: (List<Tweet>) -> Unit)
+    suspend fun addRule(query: String): List<String>
+    suspend fun deleteRule(ids: List<String>): List<String>
+    suspend fun getTweets(listener: TweetRemoteDataSource.OnTweetsLoadedListener)
 }
 
 data class AddRuleRequest(val add: List<Rule> = listOf())

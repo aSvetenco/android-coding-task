@@ -18,9 +18,17 @@ class MainViewModel(private val repository: TweetRepository) : ViewModel() {
 
     val tweetData = MutableLiveData<List<Tweet>>()
 
+    fun getTweets() {
+        launchDataLoad {
+            repository.getTweets().collect {
+                tweetData.value = it
+            }
+        }
+    }
+
     fun fetchStatuses() {
         launchDataLoad {
-            repository.getTweets("Hello World", tweetData)
+            repository.fetchTweets("Hello World")
         }
     }
 

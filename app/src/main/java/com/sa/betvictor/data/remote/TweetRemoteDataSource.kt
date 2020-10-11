@@ -11,19 +11,19 @@ class TweetRemoteDataSource(
     private val gson: Gson
 ) : TweetRemoteClient {
 
-    override suspend fun addRule(query: String): String {
+    override suspend fun addRule(query: String): List<String> {
         val request = AddRuleRequest(listOf(Rule(value = query)))
         val rules = api.addRule(request).data
-        return if (rules.isEmpty()) "" else rules[0].id ?: ""
+        return rules.map { it.id ?: "" }
     }
 
-    override suspend fun deleteRule(id: String): String {
-        val request = DeleteRuleRequest(DeletedRule(listOf(id)))
+    override suspend fun deleteRule(ids: List<String>): List<String> {
+        val request = DeleteRuleRequest(DeletedRule(ids))
         val meta = api.deleteRule(request).meta
-        return if (meta.summary.deleted == 1) id else ""
+        return if (meta.summary.deleted == 1) ids else listOf()
     }
 
-    override suspend fun getTweets(tweetLoaded: (List<Tweet>) -> Unit) {
+    override suspend fun getTweets(listener: OnTweetsLoadedListener) {
         val response = api.getTweets()
         val source = response.source()
         val buffer = Buffer()
@@ -40,7 +40,7 @@ class TweetRemoteDataSource(
                     tweets.remove(last)
                     stream.append(last)
                 }
-                tweetLoaded(parseTweetJson(tweets))
+                listener.onTweetsLoaded(parseTweetJson(tweets))
             }
         }
     }
@@ -52,4 +52,8 @@ class TweetRemoteDataSource(
             Log.e("JSON_FAILED", tweets.toString())
             listOf()
         }
+
+    interface OnTweetsLoadedListener {
+        suspend fun onTweetsLoaded(tweets: List<Tweet>)
+    }
 }
