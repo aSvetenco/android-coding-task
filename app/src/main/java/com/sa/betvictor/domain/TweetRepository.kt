@@ -13,6 +13,10 @@ class TweetRepository(
 
     fun getTweets() = localDataSource.getTweets()
 
+    suspend fun clearExpiredTweets(conditionTime: Long) {
+        localDataSource.clearExpiredTweets(conditionTime)
+    }
+
     suspend fun fetchTweets(query: String) =
         withContext(Dispatchers.IO) {
             clearRules()

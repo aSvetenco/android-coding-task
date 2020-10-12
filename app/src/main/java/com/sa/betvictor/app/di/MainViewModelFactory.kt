@@ -2,13 +2,17 @@ package com.sa.betvictor.app.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.sa.betvictor.common.NetworkStateMonitor
+import com.sa.betvictor.common.Timer
 import com.sa.betvictor.domain.TweetRepository
 import com.sa.betvictor.ui.TweetListViewModel
 import com.sa.betvictor.ui.TweetQueryValidator
 
 class MainViewModelFactory(
     private val repository: TweetRepository,
-    private val validator: TweetQueryValidator
+    private val validator: TweetQueryValidator,
+    private val networkMonitor: NetworkStateMonitor,
+    private val timer: Timer
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
@@ -16,6 +20,6 @@ class MainViewModelFactory(
         if (modelClass != TweetListViewModel::class.java) {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
-        return TweetListViewModel(repository, validator) as T
+        return TweetListViewModel(repository, validator, networkMonitor, timer) as T
     }
 }

@@ -3,6 +3,8 @@ package com.sa.betvictor.app.di
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import com.sa.betvictor.common.NetworkStateMonitor
+import com.sa.betvictor.common.Timer
 import com.sa.betvictor.data.local.TweetEntityMapper
 import com.sa.betvictor.data.local.TweetLocalDataSource
 import com.sa.betvictor.data.local.database.TweetsDatabase
@@ -20,7 +22,7 @@ class DependenciesContainer(private val app: Application) {
     private val gson = Gson()
 
     fun viewModelFactory(): ViewModelProvider.Factory =
-        MainViewModelFactory(repository(), tweetQueryValidator())
+        MainViewModelFactory(repository(), tweetQueryValidator(), networkMonitor(), timer())
 
     private fun repository() = TweetRepository(tweetRemoteDataSource(), tweetLocalDataSource())
 
@@ -52,5 +54,9 @@ class DependenciesContainer(private val app: Application) {
     private fun tweetEntityMapper() = TweetEntityMapper()
 
     private fun tweetQueryValidator() = TweetQueryValidator()
+
+    private fun networkMonitor() = NetworkStateMonitor(app.applicationContext)
+
+    private fun timer() = Timer()
 
 }
