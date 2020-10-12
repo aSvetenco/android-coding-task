@@ -22,7 +22,7 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
     private var onActionClick: () -> Unit = {}
 
     private val viewModel: TweetListViewModel by viewModels {
-        (requireActivity().application as App).container.viewModelFactory()
+        (requireActivity().application as App).container.tweetVMFactory()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

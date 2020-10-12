@@ -4,7 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-class AuthenticationInterceptor : Interceptor {
+class AuthenticationInterceptor(private val token: String) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         return chain.proceed(authorizeRequest(chain.request()))
@@ -14,7 +14,7 @@ class AuthenticationInterceptor : Interceptor {
         request.newBuilder()
             .header(
                 "Authorization",
-                "Bearer "
+                "Bearer $token"
             )
             .build()
 }

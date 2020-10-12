@@ -26,7 +26,7 @@ class TweetRepository(
 
     fun cancelStreamedCall() = remoteDataSource.cancelStreamedCall()
 
-    suspend fun clearRules() {
+    private suspend fun clearRules() {
         val rules = localDataSource.getRuleIds()
         if (rules.isNotEmpty()) {
             runInIO { remoteDataSource.deleteRule(rules) }
@@ -34,7 +34,7 @@ class TweetRepository(
         }
     }
 
-    suspend fun addRule(query: String) {
+    private suspend fun addRule(query: String) {
         val ruleIds = runInIO { remoteDataSource.addRule(query) }
         localDataSource.saveRules(ruleIds)
     }
