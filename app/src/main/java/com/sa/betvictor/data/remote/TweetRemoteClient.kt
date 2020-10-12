@@ -7,6 +7,7 @@ interface TweetRemoteClient {
     suspend fun addRule(query: String): List<String>
     suspend fun deleteRule(ids: List<String>): List<String>
     suspend fun getTweets(listener: OnTweetsLoadedListener)
+    fun cancelStreamedCall()
 }
 
 data class AddRuleRequest(val add: List<RuleDto> = listOf())
@@ -23,7 +24,7 @@ data class DeleteRuleRequest(val delete: DeletedRule = DeletedRule())
 
 data class DeleteRuleResponse(val meta: DeleteMetaData = DeleteMetaData())
 
-data class DeletedRule(val isd: List<String> = listOf())
+data class DeletedRule(val ids: List<String> = listOf())
 
 data class DeleteMetaData(val summary: Summary = Summary())
 

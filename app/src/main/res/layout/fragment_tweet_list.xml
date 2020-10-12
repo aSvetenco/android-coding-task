@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.MainActivity">
+
+    <EditText
+        android:id="@+id/searchField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/search_field_hint"
+        android:layout_marginTop="@dimen/common_24dp"
+        android:layout_marginStart="@dimen/common_16dp"
+        android:layout_marginEnd="@dimen/common_8dp"
+        android:inputType="text"
+        android:imeOptions="actionDone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/actionBtn"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="Autofill" />
+
+    <Button
+        android:id="@+id/actionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_btn_start"
+        android:layout_marginEnd="@dimen/common_16dp"
+        app:layout_constraintStart_toEndOf="@+id/searchField"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/searchField"
+        app:layout_constraintBottom_toBottomOf="@+id/searchField" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/tweetList"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/common_16dp"
+        android:layout_marginBottom="@dimen/common_16dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintStart_toStartOf="@+id/searchField"
+        app:layout_constraintEnd_toEndOf="@+id/actionBtn"
+        app:layout_constraintTop_toBottomOf="@+id/searchField"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:itemCount="10"
+        tools:listitem="@layout/item_tweet" />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="@dimen/common_44dp"
+        android:layout_height="@dimen/common_44dp"
+        android:visibility="gone"
+        android:padding="@dimen/common_8dp"
+        android:background="@drawable/progress_background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:visibility="visible"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

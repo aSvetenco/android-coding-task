@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">BetVictorCodingTask</string>
+    <string name="app_name">Tweet Stream</string>
     <string name="search_field_hint">Type your query...</string>
-    <string name="search_button_title">Start</string>
+    <string name="action_btn_start">Start</string>
+    <string name="action_btn_stop">Stop</string>
+    <string name="error_query_validation_empty_query">Missing query</string>
+    <string name="error_query_validation_to_long_query">Only 128 symbols are allowed</string>
 </resources>
