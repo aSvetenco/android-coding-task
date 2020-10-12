@@ -1,13 +1,13 @@
-package com.sa.betvictor.data.local
+package com.sa.betvictor.data.local.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.sa.betvictor.data.local.dao.RuleDao
-import com.sa.betvictor.data.local.dao.TweetDao
-import com.sa.betvictor.data.local.entity.RuleEntity
-import com.sa.betvictor.data.local.entity.TweetEntity
+import com.sa.betvictor.data.local.database.dao.RuleDao
+import com.sa.betvictor.data.local.database.dao.TweetDao
+import com.sa.betvictor.data.local.database.entity.RuleEntity
+import com.sa.betvictor.data.local.database.entity.TweetEntity
 
 @Database(entities = [TweetEntity::class, RuleEntity::class], version = 1, exportSchema = false)
 abstract class TweetsDatabase : RoomDatabase() {

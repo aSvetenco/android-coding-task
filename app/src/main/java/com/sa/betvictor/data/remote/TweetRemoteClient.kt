@@ -1,20 +1,19 @@
 package com.sa.betvictor.data.remote
 
 import com.google.gson.annotations.SerializedName
-import com.sa.betvictor.domain.Tweet
-import kotlinx.coroutines.flow.Flow
+import com.sa.betvictor.data.remote.TweetRemoteDataSource.OnTweetsLoadedListener
 
 interface TweetRemoteClient {
     suspend fun addRule(query: String): List<String>
     suspend fun deleteRule(ids: List<String>): List<String>
-    suspend fun getTweets(listener: TweetRemoteDataSource.OnTweetsLoadedListener)
+    suspend fun getTweets(listener: OnTweetsLoadedListener)
 }
 
-data class AddRuleRequest(val add: List<Rule> = listOf())
+data class AddRuleRequest(val add: List<RuleDto> = listOf())
 
-data class AddRuleResponse(val data: List<Rule> = listOf())
+data class AddRuleResponse(val data: List<RuleDto> = listOf())
 
-data class Rule(
+data class RuleDto(
     val value: String,
     val tag: String? = null,
     val id: String? = null
@@ -33,4 +32,9 @@ data class Summary(
     @SerializedName("not_deleted") val notDeleted: Int = 0
 )
 
-data class TweetResponse(@SerializedName("data") val tweet: Tweet = Tweet())
+data class TweetResponse(val data: TweetDto = TweetDto())
+
+data class TweetDto(
+    val id: String = "",
+    val text: String = ""
+)

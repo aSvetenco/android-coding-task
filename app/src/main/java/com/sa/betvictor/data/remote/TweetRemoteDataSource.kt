@@ -8,11 +8,12 @@ import java.nio.charset.Charset
 
 class TweetRemoteDataSource(
     private val api: Api,
-    private val gson: Gson
+    private val gson: Gson,
+    private val mapper: TweetDtoMapper
 ) : TweetRemoteClient {
 
     override suspend fun addRule(query: String): List<String> {
-        val request = AddRuleRequest(listOf(Rule(value = query)))
+        val request = AddRuleRequest(listOf(RuleDto(value = query)))
         val rules = api.addRule(request).data
         return rules.map { it.id ?: "" }
     }
@@ -47,7 +48,10 @@ class TweetRemoteDataSource(
 
     private fun parseTweetJson(tweets: List<String>) =
         try {
-            tweets.map { gson.fromJson(it, TweetResponse::class.java).tweet }
+            tweets.map {
+                val dto = gson.fromJson(it, TweetResponse::class.java).data
+                mapper.mapFromDto(dto)
+            }
         } catch (e: Throwable) {
             Log.e("JSON_FAILED", tweets.toString())
             listOf()

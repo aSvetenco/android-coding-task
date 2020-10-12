@@ -4,14 +4,14 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.sa.betvictor.R
-import com.sa.betvictor.di.TweetDependenciesFactory.viewModelFactory
+import com.sa.betvictor.app.App
 import com.sa.betvictor.domain.Tweet
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     private val adapter = TweetAdapter()
-    private val viewModel: MainViewModel by viewModels { viewModelFactory(applicationContext) }
+    private val viewModel: MainViewModel by viewModels { (application as App).container.viewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,4 +26,5 @@ class MainActivity : AppCompatActivity() {
     private fun onTweetsLoaded(list: List<Tweet>) {
         adapter.submitList(list) { tweetList.scrollToPosition(list.size - 1) }
     }
+
 }

@@ -3,7 +3,7 @@ package com.sa.betvictor.ui
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sa.betvictor.data.TweetRepository
+import com.sa.betvictor.domain.TweetRepository
 import com.sa.betvictor.domain.Tweet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +15,7 @@ class MainViewModel(private val repository: TweetRepository) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private var fetchTweetsJob: Job? = null
 
     val tweetData = MutableLiveData<List<Tweet>>()
 
@@ -27,8 +28,14 @@ class MainViewModel(private val repository: TweetRepository) : ViewModel() {
     }
 
     fun fetchStatuses() {
-        launchDataLoad {
+        fetchTweetsJob = launchDataLoad {
             repository.fetchTweets("Hello World")
+        }
+    }
+
+    fun cancelFetchTweets() {
+        if (fetchTweetsJob?.isActive == true) {
+            fetchTweetsJob?.cancel()
         }
     }
 

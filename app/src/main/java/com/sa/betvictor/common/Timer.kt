@@ -1,4 +1,4 @@
-package com.sa.betvictor
+package com.sa.betvictor.common
 
 import kotlinx.coroutines.*
 
@@ -11,10 +11,10 @@ class Timer {
         this.listener = listener
     }
 
-    fun start(period: Long, isPeriodic: Boolean = true, coroutineScope: CoroutineScope) {
+    fun schedule(coroutineScope: CoroutineScope, period: Long, isRepeating: Boolean = true) {
         timerJob = coroutineScope.launch {
             withContext(Dispatchers.Default) {
-                scheduleTask(period, isPeriodic)
+                scheduleTask(period, isRepeating)
             }
         }
     }
@@ -23,10 +23,10 @@ class Timer {
         timerJob?.cancel()
     }
 
-    private suspend fun scheduleTask(period: Long, isPeriodic: Boolean = true) {
+    private suspend fun scheduleTask(period: Long, isRepeating: Boolean) {
         delay(period)
         listener?.onPeriodFinished()
-        if (isPeriodic) scheduleTask(period, isPeriodic)
+        if (isRepeating) scheduleTask(period, isRepeating)
     }
 
     interface OnPeriodFinishedListener {
