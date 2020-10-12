@@ -11,6 +11,7 @@ import com.sa.betvictor.data.remote.AuthenticationInterceptor
 import com.sa.betvictor.data.remote.TweetDtoMapper
 import com.sa.betvictor.data.remote.TweetRemoteDataSource
 import com.sa.betvictor.domain.TweetRepository
+import com.sa.betvictor.ui.TweetQueryValidator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
@@ -18,7 +19,8 @@ class DependenciesContainer(private val app: Application) {
 
     private val gson = Gson()
 
-    fun viewModelFactory(): ViewModelProvider.Factory = MainViewModelFactory(repository())
+    fun viewModelFactory(): ViewModelProvider.Factory =
+        MainViewModelFactory(repository(), tweetQueryValidator())
 
     private fun repository() = TweetRepository(tweetRemoteDataSource(), tweetLocalDataSource())
 
@@ -48,5 +50,7 @@ class DependenciesContainer(private val app: Application) {
     private fun tweetDtoMapper() = TweetDtoMapper()
 
     private fun tweetEntityMapper() = TweetEntityMapper()
+
+    private fun tweetQueryValidator() = TweetQueryValidator()
 
 }

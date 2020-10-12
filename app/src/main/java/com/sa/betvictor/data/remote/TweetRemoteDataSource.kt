@@ -3,7 +3,9 @@ package com.sa.betvictor.data.remote
 import android.util.Log
 import com.google.gson.Gson
 import com.sa.betvictor.domain.Tweet
+import okhttp3.ResponseBody
 import okio.Buffer
+import retrofit2.Call
 import java.nio.charset.Charset
 
 class TweetRemoteDataSource(
@@ -11,6 +13,8 @@ class TweetRemoteDataSource(
     private val gson: Gson,
     private val mapper: TweetDtoMapper
 ) : TweetRemoteClient {
+
+    private var steamedCall: Call<ResponseBody>? = null
 
     override suspend fun addRule(query: String): List<String> {
         val request = AddRuleRequest(listOf(RuleDto(value = query)))
@@ -25,7 +29,7 @@ class TweetRemoteDataSource(
     }
 
     override suspend fun getTweets(listener: OnTweetsLoadedListener) {
-        val response = api.getTweets()
+        val response = api.getTweets().body()
         val source = response.source()
         val buffer = Buffer()
         val stream = StringBuilder()
@@ -46,6 +50,10 @@ class TweetRemoteDataSource(
         }
     }
 
+    override fun cancelStreamedCall() {
+        steamedCall?.cancel()
+    }
+
     private fun parseTweetJson(tweets: List<String>) =
         try {
             tweets.map {
@@ -56,6 +64,15 @@ class TweetRemoteDataSource(
             Log.e("JSON_FAILED", tweets.toString())
             listOf()
         }
+
+   private fun Call<ResponseBody>.body(): ResponseBody {
+        steamedCall = this
+        val response = execute()
+
+        if (response.isSuccessful) return response.body()
+            ?: throw Throwable("Response body is null")
+        else throw Throwable(response.errorBody()?.string())
+    }
 
     interface OnTweetsLoadedListener {
         suspend fun onTweetsLoaded(tweets: List<Tweet>)
