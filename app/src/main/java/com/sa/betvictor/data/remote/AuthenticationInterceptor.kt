@@ -14,7 +14,7 @@ class AuthenticationInterceptor : Interceptor {
         request.newBuilder()
             .header(
                 "Authorization",
-                "Bearer "
+                "Bearer AAAAAAAAAAAAAAAAAAAAABzLIQEAAAAAsHeOI2LGAKMOuzN2QVVheaRZHFo%3DWErHvnszJXHAtDHN3WJQXtZn4OgGTO8TI7dSt2ZZZ05fnp36P9"
             )
             .build()
 }

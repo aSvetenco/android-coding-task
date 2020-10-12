@@ -9,7 +9,7 @@ interface TweetLocalClient {
 
     suspend fun saveTweets(tweets: List<Tweet>)
 
-    suspend fun deleteExpiredTweets(conditionTime: Long)
+    suspend fun clearExpiredTweets(conditionTime: Long)
 
     suspend fun getRuleIds(): List<String>
 

@@ -20,7 +20,7 @@ class TweetLocalDataSource(
         tweetDao.insertTweets(tweets.map { tweetMapper.mapToDto(it) })
     }
 
-    override suspend fun deleteExpiredTweets(conditionTime: Long) {
+    override suspend fun clearExpiredTweets(conditionTime: Long) {
         tweetDao.deleteExpiredTweets(conditionTime)
     }
 

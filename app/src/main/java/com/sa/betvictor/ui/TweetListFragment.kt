@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import com.sa.betvictor.R
 import com.sa.betvictor.app.App
 import com.sa.betvictor.common.hideKeyboard
+import com.sa.betvictor.common.toast
 import com.sa.betvictor.domain.Tweet
 import com.sa.betvictor.ui.TweetListViewModel.FetchState.ACTIVE
 import com.sa.betvictor.ui.TweetListViewModel.FetchState.INACTIVE
@@ -30,6 +31,7 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
         viewModel.progress.observe(viewLifecycleOwner, ::showLoading)
         viewModel.fetchState.observe(viewLifecycleOwner, ::handleFetchState)
         viewModel.onInvalidQuery.observe(viewLifecycleOwner, ::onInvalidQuery)
+        viewModel.onNetworkUnavailable.observe(viewLifecycleOwner, ::showToast)
         viewModel.getTweets()
 
         actionBtn.setOnClickListener {
@@ -64,6 +66,10 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
 
     private fun onInvalidQuery(@StringRes errorRes: Int) {
         searchField.error = getString(errorRes)
+    }
+
+    private fun showToast(@StringRes messageRes: Int) {
+        requireContext().toast(messageRes)
     }
 
     companion object {

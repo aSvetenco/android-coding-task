@@ -4,14 +4,15 @@ import kotlinx.coroutines.*
 
 class Timer {
 
-    private var listener: OnPeriodFinishedListener? = null
+    private var listener: OnScheduledTimerExpiredListener? = null
     private var timerJob: Job? = null
 
-    fun setOnPeriodFinishedListener(listener: OnPeriodFinishedListener) {
+    fun setOnPeriodFinishedListener(listener: OnScheduledTimerExpiredListener) {
         this.listener = listener
     }
 
     fun schedule(coroutineScope: CoroutineScope, period: Long, isRepeating: Boolean = true) {
+        if (timerJob?.isActive == true) stop()
         timerJob = coroutineScope.launch {
             withContext(Dispatchers.Default) {
                 scheduleTask(period, isRepeating)
@@ -25,11 +26,11 @@ class Timer {
 
     private suspend fun scheduleTask(period: Long, isRepeating: Boolean) {
         delay(period)
-        listener?.onPeriodFinished()
+        listener?.onScheduledTimerExpired()
         if (isRepeating) scheduleTask(period, isRepeating)
     }
 
-    interface OnPeriodFinishedListener {
-        fun onPeriodFinished()
+    interface OnScheduledTimerExpiredListener {
+        suspend fun onScheduledTimerExpired()
     }
 }
