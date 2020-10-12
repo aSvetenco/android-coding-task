@@ -32,19 +32,23 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
         viewModel.fetchState.observe(viewLifecycleOwner, ::handleFetchState)
         viewModel.onInvalidQuery.observe(viewLifecycleOwner, ::onInvalidQuery)
         viewModel.onNetworkUnavailable.observe(viewLifecycleOwner, ::showToast)
+        viewModel.error.observe(viewLifecycleOwner, ::showToast)
         viewModel.getTweets()
 
-        actionBtn.setOnClickListener {
-            requireContext().hideKeyboard(view)
-            onActionClick()
-        }
+        actionBtn.setOnClickListener { onActionButtonClick() }
         tweetList.adapter = adapter
         tweetList.setHasFixedSize(true)
         searchField.doOnTextChanged { _, _, _, _ -> searchField.error = null }
     }
 
+    private fun onActionButtonClick() {
+        requireContext().hideKeyboard(searchField)
+        searchField.clearFocus()
+        onActionClick()
+    }
+
     private fun onTweetsLoaded(list: List<Tweet>) {
-        adapter.submitList(list) { tweetList.scrollToPosition(list.size - 1) }
+        adapter.submitList(list) { tweetList?.scrollToPosition(list.size - 1) }
     }
 
     private fun showLoading(isLoading: Boolean) {

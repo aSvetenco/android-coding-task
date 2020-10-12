@@ -1,12 +1,13 @@
 package com.sa.betvictor.data.remote
 
 import com.google.gson.annotations.SerializedName
-import com.sa.betvictor.data.remote.TweetRemoteDataSource.OnTweetsLoadedListener
+import com.sa.betvictor.domain.Tweet
+import kotlinx.coroutines.flow.Flow
 
 interface TweetRemoteClient {
     suspend fun addRule(query: String): List<String>
     suspend fun deleteRule(ids: List<String>): List<String>
-    suspend fun getTweets(listener: OnTweetsLoadedListener)
+    suspend fun fetchTweets(): Flow<List<Tweet>>
     fun cancelStreamedCall()
 }
 
