@@ -1,8 +1,8 @@
-package com.sa.betvictor.di
+package com.sa.betvictor.app.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.sa.betvictor.data.TweetRepository
+import com.sa.betvictor.domain.TweetRepository
 import com.sa.betvictor.ui.MainViewModel
 
 class MainViewModelFactory(private val repository: TweetRepository) : ViewModelProvider.Factory {

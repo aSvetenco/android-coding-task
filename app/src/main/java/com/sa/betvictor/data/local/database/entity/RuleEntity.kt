@@ -1,4 +1,4 @@
-package com.sa.betvictor.data.local.entity
+package com.sa.betvictor.data.local.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -7,6 +7,5 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "Rules")
 data class RuleEntity(
     @PrimaryKey
-    val id: String,
-    val value: String
+    val id: String
 )

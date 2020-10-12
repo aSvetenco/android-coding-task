@@ -1,10 +1,10 @@
-package com.sa.betvictor.data.local.dao
+package com.sa.betvictor.data.local.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sa.betvictor.data.local.entity.RuleEntity
+import com.sa.betvictor.data.local.database.entity.RuleEntity
 
 @Dao
 interface RuleDao {
