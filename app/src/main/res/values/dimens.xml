@@ -4,4 +4,5 @@
     <dimen name="common_16dp">16dp</dimen>
     <dimen name="common_24dp">24dp</dimen>
     <dimen name="common_36dp">36dp</dimen>
+    <dimen name="common_44dp">44dp</dimen>
 </resources>

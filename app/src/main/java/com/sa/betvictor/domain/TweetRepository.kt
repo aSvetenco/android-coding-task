@@ -20,6 +20,8 @@ class TweetRepository(
             remoteDataSource.getTweets(this@TweetRepository)
         }
 
+    fun cancelStreamedCall() = remoteDataSource.cancelStreamedCall()
+
     private suspend fun clearRules() {
         val rules = localDataSource.getRuleIds()
         if (rules.isNotEmpty()) {

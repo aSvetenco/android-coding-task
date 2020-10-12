@@ -1,6 +1,7 @@
 package com.sa.betvictor.data.remote
 
 import okhttp3.ResponseBody
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -16,7 +17,7 @@ interface Api {
 
     @Streaming
     @GET("$VERSION/tweets/search/stream")
-    suspend fun getTweets(): ResponseBody
+    fun getTweets(): Call<ResponseBody>
 
     private companion object {
         private const val VERSION = "2"
