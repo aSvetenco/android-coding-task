@@ -3,6 +3,7 @@ package com.sa.betvictor.app.di
 import android.app.Application
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
+import com.sa.betvictor.BuildConfig
 import com.sa.betvictor.common.NetworkStateMonitor
 import com.sa.betvictor.common.Timer
 import com.sa.betvictor.data.local.TweetEntityMapper
@@ -15,14 +16,13 @@ import com.sa.betvictor.data.remote.TweetRemoteDataSource
 import com.sa.betvictor.domain.TweetRepository
 import com.sa.betvictor.ui.TweetQueryValidator
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 
 class DependenciesContainer(private val app: Application) {
 
     private val gson = Gson()
 
-    fun viewModelFactory(): ViewModelProvider.Factory =
-        MainViewModelFactory(repository(), tweetQueryValidator(), networkMonitor(), timer())
+    fun tweetVMFactory(): ViewModelProvider.Factory =
+        TweetViewModelFactory(repository(), tweetQueryValidator(), networkMonitor(), timer())
 
     private fun repository() = TweetRepository(tweetRemoteDataSource(), tweetLocalDataSource())
 
@@ -34,10 +34,8 @@ class DependenciesContainer(private val app: Application) {
     private fun api() = apiService(okHttpClient()).twitterStreamApi()
 
     private fun okHttpClient(): OkHttpClient {
-        val inter = HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }
         return OkHttpClient.Builder()
-            .addInterceptor(AuthenticationInterceptor())
-            // .addInterceptor(inter)
+            .addInterceptor(AuthenticationInterceptor(BuildConfig.TWITTER_TOKEN))
             .build()
     }
 

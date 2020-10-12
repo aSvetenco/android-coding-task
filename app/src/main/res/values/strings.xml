@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Tweet Stream</string>
-    <string name="search_field_hint">Type your query...</string>
+    <string name="search_field_hint">Type your query&#8230;</string>
     <string name="action_btn_start">Start</string>
     <string name="action_btn_stop">Stop</string>
     <string name="error_query_validation_empty_query">Missing query</string>
     <string name="error_query_validation_to_long_query">Only 128 symbols are allowed</string>
     <string name="error_no_network_connection">No Internet Connection</string>
-    <string name="error_generic">Something went wrong...</string>
-    <string name="error_stream_canceled">Stream canceld</string>
+    <string name="error_generic">Something went wrong&#8230;</string>
+    <string name="error_stream_canceled">Stream was canceled</string>
 </resources>

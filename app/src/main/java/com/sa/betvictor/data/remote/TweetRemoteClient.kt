@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TweetRemoteClient {
     suspend fun addRule(query: String): List<String>
-    suspend fun deleteRule(ids: List<String>): List<String>
+    suspend fun deleteRule(ids: List<String>)
     suspend fun fetchTweets(): Flow<List<Tweet>>
     fun cancelStreamedCall()
 }

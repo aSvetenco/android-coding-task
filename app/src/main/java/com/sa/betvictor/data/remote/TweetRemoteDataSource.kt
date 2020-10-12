@@ -22,13 +22,12 @@ class TweetRemoteDataSource(
     override suspend fun addRule(query: String): List<String> {
         val request = AddRuleRequest(listOf(RuleDto(value = query)))
         val rules = api.addRule(request).data
-        return rules.map { it.id ?: "" }
+        return rules.map { it.id ?: "" }.filter { it.isNotEmpty() }
     }
 
-    override suspend fun deleteRule(ids: List<String>): List<String> {
+    override suspend fun deleteRule(ids: List<String>) {
         val request = DeleteRuleRequest(DeletedRule(ids))
-        val meta = api.deleteRule(request).meta
-        return if (meta.summary.deleted == 1) ids else listOf()
+        api.deleteRule(request).meta
     }
 
     override suspend fun fetchTweets(): Flow<List<Tweet>> = flow {

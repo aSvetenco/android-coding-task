@@ -8,7 +8,7 @@ import com.sa.betvictor.domain.TweetRepository
 import com.sa.betvictor.ui.TweetListViewModel
 import com.sa.betvictor.ui.TweetQueryValidator
 
-class MainViewModelFactory(
+class TweetViewModelFactory(
     private val repository: TweetRepository,
     private val validator: TweetQueryValidator,
     private val networkMonitor: NetworkStateMonitor,

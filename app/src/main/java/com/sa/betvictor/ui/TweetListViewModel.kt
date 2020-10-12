@@ -85,18 +85,6 @@ class TweetListViewModel(
         timer.stop()
     }
 
-    private fun onError(throwable: Throwable) {
-        when (throwable) {
-            is CancellationException -> Unit
-
-            //Todo - error handling needed - Http, Twitter API errors and edge cases
-            is StreamResetException -> _error.value = R.string.error_stream_canceled
-            is UnknownHostException -> _error.value = R.string.error_no_network_connection
-            else -> _error.value = R.string.error_generic
-        }
-        Log.e(TAG, throwable.message, throwable)
-    }
-
     private fun scheduleTimer() {
         val period = if (TWEET_LIFESPAN > ONE_SECOND) ONE_SECOND else TWEET_LIFESPAN
         timer.schedule(uiScope, period)
@@ -110,7 +98,6 @@ class TweetListViewModel(
         if (isNetworkAvailable) scheduleTimer()
         else {
             cancelFetchTweets()
-            timer.stop()
             _onNetworkUnavailable.postValue(R.string.error_no_network_connection)
         }
     }
@@ -133,6 +120,18 @@ class TweetListViewModel(
         } finally {
             doOnComplete()
         }
+    }
+
+    private fun onError(throwable: Throwable) {
+        when (throwable) {
+            is CancellationException -> Unit
+
+            //Todo - error handling needed - Http, Twitter API errors and edge cases
+            is StreamResetException -> _error.value = R.string.error_stream_canceled
+            is UnknownHostException -> _error.value = R.string.error_no_network_connection
+            else -> _error.value = R.string.error_generic
+        }
+        Log.e(TAG, throwable.message, throwable)
     }
 
     override fun onCleared() {
