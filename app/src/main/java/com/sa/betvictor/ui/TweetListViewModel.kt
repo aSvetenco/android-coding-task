@@ -1,28 +1,50 @@
 package com.sa.betvictor.ui
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sa.betvictor.R
+import com.sa.betvictor.common.ActionLiveData
 import com.sa.betvictor.common.NetworkStateMonitor
 import com.sa.betvictor.common.Timer
 import com.sa.betvictor.domain.Tweet
 import com.sa.betvictor.domain.TweetRepository
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
+import okhttp3.internal.http2.StreamResetException
+import java.net.UnknownHostException
 
 class TweetListViewModel(
-    private val repository: TweetRepository,
-    private val validator: TweetQueryValidator,
-    private val networkMonitor: NetworkStateMonitor,
-    private val timer: Timer
+        private val repository: TweetRepository,
+        private val validator: TweetQueryValidator,
+        private val networkMonitor: NetworkStateMonitor,
+        private val timer: Timer
 ) : ViewModel(), TweetQueryValidator.TweetQueryValidationListener,
-    NetworkStateMonitor.OnNetworkAvailableListener, Timer.OnScheduledTimerExpiredListener {
+        NetworkStateMonitor.OnNetworkAvailableListener, Timer.OnScheduledTimerExpiredListener {
 
     private val TAG = TweetListViewModel::class.java.simpleName
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     private var fetchTweetsJob: Job? = null
+
+    private val _fetchState = MutableLiveData(FetchState.INACTIVE)
+    private val _tweetData = MutableLiveData<List<Tweet>>()
+    private val _progress = MutableLiveData<Boolean>()
+    private val _onInvalidQuery = MutableLiveData<Int>()
+    private val _onNetworkUnavailable = ActionLiveData<Int>()
+    private val _error = ActionLiveData<Int>()
+
+    val fetchState: LiveData<FetchState> = _fetchState
+    val tweetData: LiveData<List<Tweet>> = _tweetData
+    val progress: LiveData<Boolean> = _progress
+    val onInvalidQuery: LiveData<Int> = _onInvalidQuery
+    val onNetworkUnavailable: LiveData<Int> = _onNetworkUnavailable
+    val error: LiveData<Int> = _error
 
     init {
         validator.listener = this
@@ -30,25 +52,19 @@ class TweetListViewModel(
         networkMonitor.addNetworkCallback(this)
     }
 
-    var fetchState = MutableLiveData(FetchState.INACTIVE)
-    val tweetData = MutableLiveData<List<Tweet>>()
-    val progress = MutableLiveData<Boolean>()
-    val onInvalidQuery = MutableLiveData<Int>()
-    val onNetworkUnavailable = MutableLiveData<Int>()
-
     fun getTweets() {
         launchDataLoad {
             repository.getTweets().collect {
-                progress.value = false
-                tweetData.value = it
+                _progress.value = false
+                _tweetData.value = it
             }
         }
     }
 
     fun fetchStatuses(query: String) {
         if (validator.isValid(query)) {
-            progress.value = true
-            fetchState.value = FetchState.ACTIVE
+            _progress.value = true
+            _fetchState.value = FetchState.ACTIVE
             scheduleTimer()
             fetchTweetsJob = launchDataLoad(doOnError = ::onFetchTweetsFails) {
                 repository.fetchTweets(query)
@@ -58,20 +74,25 @@ class TweetListViewModel(
 
     fun cancelFetchTweets() {
         if (fetchTweetsJob?.isActive == true) {
-            fetchTweetsJob?.cancelChildren()
+            fetchTweetsJob?.cancel()
             repository.cancelStreamedCall()
         }
     }
 
     private fun onFetchTweetsFails(t: Throwable) {
-        progress.value = false
-        fetchState.value = FetchState.INACTIVE
+        _progress.value = false
+        _fetchState.value = FetchState.INACTIVE
         timer.stop()
     }
 
     private fun onError(throwable: Throwable) {
         when (throwable) {
             is CancellationException -> Unit
+
+            //Todo - error handling needed - Http, Twitter API errors and edge cases
+            is StreamResetException -> _error.value = R.string.error_stream_canceled
+            is UnknownHostException -> _error.value = R.string.error_no_network_connection
+            else -> _error.value = R.string.error_generic
         }
         Log.e(TAG, throwable.message, throwable)
     }
@@ -81,14 +102,8 @@ class TweetListViewModel(
         timer.schedule(uiScope, period)
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        networkMonitor.unregister()
-        viewModelJob.cancel()
-    }
-
     override fun onInvalidQuery(errorResId: Int) {
-        onInvalidQuery.value = errorResId
+        _onInvalidQuery.value = errorResId
     }
 
     override fun onNetworkIsAvailable(isNetworkAvailable: Boolean) {
@@ -96,7 +111,7 @@ class TweetListViewModel(
         else {
             cancelFetchTweets()
             timer.stop()
-            onNetworkUnavailable.postValue(R.string.error_no_network_connection)
+            _onNetworkUnavailable.postValue(R.string.error_no_network_connection)
         }
     }
 
@@ -106,9 +121,9 @@ class TweetListViewModel(
     }
 
     private fun launchDataLoad(
-        doOnError: (Throwable) -> Unit = { },
-        doOnComplete: () -> Unit = { },
-        block: suspend () -> Unit
+            doOnError: (Throwable) -> Unit = { },
+            doOnComplete: () -> Unit = { },
+            block: suspend () -> Unit
     ): Job = uiScope.launch {
         try {
             block()
@@ -118,6 +133,12 @@ class TweetListViewModel(
         } finally {
             doOnComplete()
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        networkMonitor.unregister()
+        viewModelJob.cancel()
     }
 
     enum class FetchState { ACTIVE, INACTIVE }

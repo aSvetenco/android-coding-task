@@ -2,44 +2,44 @@ package com.sa.betvictor.domain
 
 import com.sa.betvictor.data.local.TweetLocalClient
 import com.sa.betvictor.data.remote.TweetRemoteClient
-import com.sa.betvictor.data.remote.TweetRemoteDataSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class TweetRepository(
-    private val remoteDataSource: TweetRemoteClient,
-    private val localDataSource: TweetLocalClient
-) : TweetRemoteDataSource.OnTweetsLoadedListener {
+        private val remoteDataSource: TweetRemoteClient,
+        private val localDataSource: TweetLocalClient) {
 
     fun getTweets() = localDataSource.getTweets()
+
+    suspend fun fetchTweets(query: String) {
+        clearRules()
+        addRule(query)
+        remoteDataSource.fetchTweets().collect {
+            localDataSource.saveTweets(it)
+        }
+    }
 
     suspend fun clearExpiredTweets(conditionTime: Long) {
         localDataSource.clearExpiredTweets(conditionTime)
     }
 
-    suspend fun fetchTweets(query: String) =
-        withContext(Dispatchers.IO) {
-            clearRules()
-            addRule(query)
-            remoteDataSource.getTweets(this@TweetRepository)
-        }
-
     fun cancelStreamedCall() = remoteDataSource.cancelStreamedCall()
 
-    private suspend fun clearRules() {
+    suspend fun clearRules() {
         val rules = localDataSource.getRuleIds()
         if (rules.isNotEmpty()) {
-            remoteDataSource.deleteRule(rules)
+            runInIO { remoteDataSource.deleteRule(rules) }
             localDataSource.clearRules()
         }
     }
 
-    private suspend fun addRule(query: String) {
-        val ruleIds = remoteDataSource.addRule(query)
+    suspend fun addRule(query: String) {
+        val ruleIds = runInIO { remoteDataSource.addRule(query) }
         localDataSource.saveRules(ruleIds)
     }
 
-    override suspend fun onTweetsLoaded(tweets: List<Tweet>) {
-        localDataSource.saveTweets(tweets)
+    private suspend fun <T> runInIO(block: suspend () -> T) = withContext(Dispatchers.IO) {
+        block()
     }
 }
