@@ -29,7 +29,7 @@ General
 9. **org.jetbrains.kotlinx:kotlinx-coroutines** - Library from JetBrains for asynchronous and non-blocking programming. Used to simplify and make more efficient work with background tasks and asynchronous jobs 
 
 
-#Token
+# Token
 
 To make requests to Twitter API is required to have an Auth token. The token can be obtained after the creation account on https://developer.twitter.com/en. When the token is generated it has to be put in token.properties from where will be injected in the API requests header.
 
