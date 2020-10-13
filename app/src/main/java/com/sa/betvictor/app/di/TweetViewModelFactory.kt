@@ -20,6 +20,6 @@ class TweetViewModelFactory(
         if (modelClass != TweetListViewModel::class.java) {
             throw IllegalArgumentException("Unknown ViewModel class")
         }
-        return TweetListViewModel(repository, validator, networkMonitor, timer) as T
+        return TweetListViewModel(repository, validator, timer, networkMonitor) as T
     }
 }
