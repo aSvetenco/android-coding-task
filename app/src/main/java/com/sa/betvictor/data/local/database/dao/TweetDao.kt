@@ -17,5 +17,5 @@ interface TweetDao {
     suspend fun insertTweets(tweets: List<TweetEntity>)
 
     @Query("DELETE FROM Tweets WHERE createdAt <:conditionTime")
-    suspend fun deleteExpiredTweets(conditionTime: Long)
+    suspend fun deleteExpiredTweets(conditionTime: Long) : Int
 }

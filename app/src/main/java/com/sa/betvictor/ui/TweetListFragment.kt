@@ -31,8 +31,8 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
         viewModel.progress.observe(viewLifecycleOwner, ::showLoading)
         viewModel.fetchState.observe(viewLifecycleOwner, ::handleFetchState)
         viewModel.onInvalidQuery.observe(viewLifecycleOwner, ::onInvalidQuery)
-        viewModel.onNetworkUnavailable.observe(viewLifecycleOwner, ::showToast)
         viewModel.error.observe(viewLifecycleOwner, ::showToast)
+        viewModel.registerNetworkCallback().observe(viewLifecycleOwner, ::onNetworkIsAvailable)
         viewModel.getTweets()
 
         actionBtn.setOnClickListener { onActionButtonClick() }
@@ -59,7 +59,7 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
         when (state) {
             INACTIVE -> {
                 actionBtn.text = getString(R.string.action_btn_start)
-                onActionClick = { viewModel.fetchStatuses(searchField.text.toString()) }
+                onActionClick = { viewModel.fetchTweets(searchField.text.toString()) }
             }
             ACTIVE -> {
                 actionBtn.text = getString(R.string.action_btn_stop)
@@ -70,6 +70,14 @@ class TweetListFragment : Fragment(R.layout.fragment_tweet_list) {
 
     private fun onInvalidQuery(@StringRes errorRes: Int) {
         searchField.error = getString(errorRes)
+    }
+
+    private fun onNetworkIsAvailable(isAvailable: Boolean) {
+        if (isAvailable) viewModel.onNetworkAvailable()
+        else {
+            showToast(R.string.error_no_network_connection)
+            viewModel.cancelFetchTweets()
+        }
     }
 
     private fun showToast(@StringRes messageRes: Int) {

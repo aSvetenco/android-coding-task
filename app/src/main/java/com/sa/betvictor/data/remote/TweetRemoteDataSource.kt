@@ -9,12 +9,13 @@ import kotlinx.coroutines.flow.flowOn
 import okhttp3.ResponseBody
 import okio.Buffer
 import retrofit2.Call
+import retrofit2.await
 import java.nio.charset.Charset
 
 class TweetRemoteDataSource(
-        private val api: Api,
-        private val gson: Gson,
-        private val mapper: TweetDtoMapper
+    private val api: Api,
+    private val gson: Gson,
+    private val mapper: TweetDtoMapper
 ) : TweetRemoteClient {
 
     private var steamedCall: Call<ResponseBody>? = null
@@ -59,18 +60,14 @@ class TweetRemoteDataSource(
     }
 
     private fun parseTweetJson(tweets: List<String>) =
-            tweets.filter { it.isNotEmpty() }
-                    .map {
-                        val dto = gson.fromJson(it, TweetResponse::class.java).data
-                        mapper.mapFromDto(dto)
-                    }
+        tweets.filter { it.isNotEmpty() }
+            .map {
+                val dto = gson.fromJson(it, TweetResponse::class.java).data
+                mapper.mapFromDto(dto)
+            }
 
-    private fun Call<ResponseBody>.body(): ResponseBody {
+    private suspend fun Call<ResponseBody>.body(): ResponseBody {
         steamedCall = this
-        val response = execute()
-
-        if (response.isSuccessful) return response.body()
-                ?: throw Throwable("Response body is null")
-        else throw Throwable(response.errorBody()?.string())
+        return await()
     }
 }

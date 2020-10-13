@@ -1,6 +1,8 @@
 package com.sa.betvictor.app.di
 
 import android.app.Application
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModelProvider
 import com.google.gson.Gson
 import com.sa.betvictor.BuildConfig
@@ -21,22 +23,24 @@ class DependenciesContainer(private val app: Application) {
 
     private val gson = Gson()
 
+    private var connectivityManager: ConnectivityManager? = null
+
     fun tweetVMFactory(): ViewModelProvider.Factory =
-        TweetViewModelFactory(repository(), tweetQueryValidator(), networkMonitor(), timer())
+            TweetViewModelFactory(repository(), tweetQueryValidator(), networkMonitor(), timer())
 
     private fun repository() = TweetRepository(tweetRemoteDataSource(), tweetLocalDataSource())
 
     private fun tweetRemoteDataSource() = TweetRemoteDataSource(api(), gson, tweetDtoMapper())
 
     private fun tweetLocalDataSource() =
-        TweetLocalDataSource(tweetDao(), ruleDao(), tweetEntityMapper())
+            TweetLocalDataSource(tweetDao(), ruleDao(), tweetEntityMapper())
 
     private fun api() = apiService(okHttpClient()).twitterStreamApi()
 
     private fun okHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(AuthenticationInterceptor(BuildConfig.TWITTER_TOKEN))
-            .build()
+                .addInterceptor(AuthenticationInterceptor(BuildConfig.TWITTER_TOKEN))
+                .build()
     }
 
     private fun apiService(okHttpClient: OkHttpClient) = ApiService.getInstance(gson, okHttpClient)
@@ -53,8 +57,14 @@ class DependenciesContainer(private val app: Application) {
 
     private fun tweetQueryValidator() = TweetQueryValidator()
 
-    private fun networkMonitor() = NetworkStateMonitor(app.applicationContext)
+    private fun networkMonitor() = NetworkStateMonitor(connectivityManager())
+
+    private fun connectivityManager(): ConnectivityManager {
+        return connectivityManager ?: (app.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as
+                ConnectivityManager).also { connectivityManager = it }
+    }
 
     private fun timer() = Timer()
 
 }
+
