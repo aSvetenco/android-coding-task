@@ -1,24 +1,23 @@
 package com.sa.betvictor.common
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Build
+import androidx.lifecycle.LiveData
 
-class NetworkStateMonitor(context: Context) {
+class NetworkStateMonitor(private val connectivityManager: ConnectivityManager) {
 
-    private val networkCallback: NetworkCallback = NetworkCallback()
-    private val connectivityManager =
-        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val onNetworkStateChangedListener = ActionLiveData<Boolean>()
+    private val networkCallback: NetworkCallback = NetworkCallback(onNetworkStateChangedListener)
 
-    fun addNetworkCallback(callback: OnNetworkAvailableListener) {
-        networkCallback.onNetworkStateChangedListener = callback
+    fun registerNetworkCallback(): LiveData<Boolean> {
         register()
+        return onNetworkStateChangedListener
     }
 
-    fun unregister() {
+    fun unregisterNetworkCallback() {
         connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 
@@ -34,20 +33,10 @@ class NetworkStateMonitor(context: Context) {
         }
     }
 
-    class NetworkCallback : ConnectivityManager.NetworkCallback() {
+    class NetworkCallback(private val callback: ActionLiveData<Boolean>) : ConnectivityManager.NetworkCallback() {
 
-        var onNetworkStateChangedListener: OnNetworkAvailableListener? = null
+        override fun onAvailable(network: Network) = callback.postValue(true)
 
-        override fun onAvailable(network: Network) {
-            onNetworkStateChangedListener?.onNetworkIsAvailable(true)
-        }
-
-        override fun onLost(network: Network) {
-            onNetworkStateChangedListener?.onNetworkIsAvailable(false)
-        }
-    }
-
-    interface OnNetworkAvailableListener {
-        fun onNetworkIsAvailable(isNetworkAvailable: Boolean)
+        override fun onLost(network: Network) = callback.postValue(false)
     }
 }

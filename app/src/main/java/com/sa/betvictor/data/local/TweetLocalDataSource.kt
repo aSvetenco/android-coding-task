@@ -8,21 +8,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class TweetLocalDataSource(
-    private val tweetDao: TweetDao,
-    private val ruleDao: RuleDao,
-    private val tweetMapper: TweetEntityMapper
+        private val tweetDao: TweetDao,
+        private val ruleDao: RuleDao,
+        private val tweetMapper: TweetEntityMapper
 ) : TweetLocalClient {
 
     override fun getTweets(): Flow<List<Tweet>> =
-        tweetDao.getTweets().map { entities -> entities.map { tweetMapper.mapFromDto(it) } }
+            tweetDao.getTweets().map { entities -> entities.map { tweetMapper.mapFromDto(it) } }
 
     override suspend fun saveTweets(tweets: List<Tweet>) {
         tweetDao.insertTweets(tweets.map { tweetMapper.mapToDto(it) })
     }
 
-    override suspend fun clearExpiredTweets(conditionTime: Long) {
-        tweetDao.deleteExpiredTweets(conditionTime)
-    }
+    override suspend fun clearExpiredTweets(conditionTime: Long) =
+       tweetDao.deleteExpiredTweets(conditionTime)
 
     override suspend fun getRuleIds(): List<String> = ruleDao.getRules().map { it.id }
 

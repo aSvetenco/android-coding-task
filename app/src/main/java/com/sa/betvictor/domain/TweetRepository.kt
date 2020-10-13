@@ -20,9 +20,8 @@ class TweetRepository(
         }
     }
 
-    suspend fun clearExpiredTweets(conditionTime: Long) {
+    suspend fun clearExpiredTweets(conditionTime: Long) =
         localDataSource.clearExpiredTweets(conditionTime)
-    }
 
     fun cancelStreamedCall() = remoteDataSource.cancelStreamedCall()
 
