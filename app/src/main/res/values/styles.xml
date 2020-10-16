@@ -5,6 +5,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@android:color/background_light</item>
+    </style>
+
+
+    <style name="TweetItemStyle" parent="AppTheme">
+        <item name="android:background">@color/item_tweet_background</item>
     </style>
 
 </resources>
