@@ -53,7 +53,7 @@ class TweetListViewModel(
             _progress.value = true
             _fetchState.value = ACTIVE
             scheduleTimer()
-            fetchTweetsJob = launchDataLoad(doOnError = ::onFetchTweetsFails) {
+            fetchTweetsJob = launchDataLoad(doOnError = { onFetchTweetsFails() }) {
                 repository.fetchTweets(query)
             }
         }
@@ -80,7 +80,7 @@ class TweetListViewModel(
         if (deletedTweets == 0 && fetchTweetsJob?.isActive != true) timer.stop()
     }
 
-    private fun onFetchTweetsFails(t: Throwable) {
+    private fun onFetchTweetsFails() {
         _progress.value = false
         _fetchState.value = INACTIVE
         timer.stop()
