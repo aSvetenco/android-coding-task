@@ -33,7 +33,8 @@ class NetworkStateMonitor(private val connectivityManager: ConnectivityManager) 
         }
     }
 
-    class NetworkCallback(private val callback: ActionLiveData<Boolean>) : ConnectivityManager.NetworkCallback() {
+    class NetworkCallback(private val callback: ActionLiveData<Boolean>) :
+        ConnectivityManager.NetworkCallback() {
 
         override fun onAvailable(network: Network) = callback.postValue(true)
 

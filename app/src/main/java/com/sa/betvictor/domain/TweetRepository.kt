@@ -7,8 +7,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
 
 class TweetRepository(
-        private val remoteDataSource: TweetRemoteClient,
-        private val localDataSource: TweetLocalClient) {
+    private val remoteDataSource: TweetRemoteClient,
+    private val localDataSource: TweetLocalClient
+) {
 
     fun getTweets() = localDataSource.getTweets()
 
