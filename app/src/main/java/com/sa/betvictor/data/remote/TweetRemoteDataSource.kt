@@ -37,7 +37,7 @@ class TweetRemoteDataSource(
         val buffer = Buffer()
         val stream = StringBuilder()
         while (true) {
-            if (source.read(buffer, 1024) == -1L) break
+            if (source.read(buffer, BUFFER_SIZE) == -1L) break
             stream.append(buffer.readString(Charset.defaultCharset()))
 
             if (stream.contains("}\r\n")) {
@@ -69,5 +69,9 @@ class TweetRemoteDataSource(
     private suspend fun Call<ResponseBody>.body(): ResponseBody {
         steamedCall = this
         return await()
+    }
+
+    companion object {
+        private const val BUFFER_SIZE = 1024L
     }
 }

@@ -1,6 +1,5 @@
 package com.sa.betvictor.common
 
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

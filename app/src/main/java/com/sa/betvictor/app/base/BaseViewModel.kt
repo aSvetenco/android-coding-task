@@ -2,7 +2,6 @@ package com.sa.betvictor.app.base
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sa.betvictor.R
 import com.sa.betvictor.common.ActionLiveData
@@ -20,12 +19,9 @@ abstract class BaseViewModel(private val networkMonitor: NetworkStateMonitor) : 
     private val viewModelJob = Job()
     protected val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
-    protected val _progress = MutableLiveData<Boolean>()
     private val _error = ActionLiveData<Int>()
 
     abstract val tag: String
-
-    val progress: LiveData<Boolean> = _progress
     val error: LiveData<Int> = _error
 
     fun registerNetworkCallback() = networkMonitor.registerNetworkCallback()
