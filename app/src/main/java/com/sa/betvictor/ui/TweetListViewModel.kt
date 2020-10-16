@@ -27,7 +27,9 @@ class TweetListViewModel(
     private val _fetchState = MutableLiveData(INACTIVE)
     private val _tweetData = MutableLiveData<List<Tweet>>()
     private val _onInvalidQuery = MutableLiveData<Int>()
+    private val _progress = MutableLiveData<Boolean>()
 
+    val progress: LiveData<Boolean> = _progress
     val fetchState: LiveData<FetchState> = _fetchState
     val tweetData: LiveData<List<Tweet>> = _tweetData
     val onInvalidQuery: LiveData<Int> = _onInvalidQuery

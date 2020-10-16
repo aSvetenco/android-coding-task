@@ -24,9 +24,7 @@ class TweetAdapter : ListAdapter<Tweet, TweetAdapter.TweetViewHolder>(ItemCallba
     class TweetViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     private class ItemCallback : DiffUtil.ItemCallback<Tweet>() {
-        override fun areItemsTheSame(oldItem: Tweet, newItem: Tweet)
-                = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: Tweet, newItem: Tweet) = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Tweet, newItem: Tweet) = oldItem == newItem
     }
-
 }
