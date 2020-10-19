@@ -18,15 +18,17 @@ jobs:
       - name: Detekt
         run: ./gradlew detekt
 
+      - name: Upload lint report
       - uses: actions/upload-artifact@v2
-         with:
-          name: lint-report.html
+        with:
+          name: lint-results.html
           path: app/build/reports/lint-results.html
 
+      - name: Upload detekt report
       - uses: actions/upload-artifact@v2
-          with:
-            name: detekt.html
-            path: build/reports/detekt.html
+        with:
+          name: detekt.html
+          path: build/reports/detekt.html
 
   test:
     name: Unit tests
